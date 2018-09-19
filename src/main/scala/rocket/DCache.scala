@@ -590,7 +590,7 @@ class DCacheModule(outer: DCache) extends HellaCacheModule(outer) {
 
   // Handle an incoming TileLink Probe message
   val block_probe = releaseInFlight || grantInProgress || blockProbeAfterGrantCount > 0 || lrscValid
-  metaArb.io.in(6).valid := tl_out.b.valid && !block_probe
+  metaArb.io.in(6).valid := tl_out.b.valid && (!block_probe || lrscCount > 0 && !lrscValid)
   tl_out.b.ready := metaArb.io.in(6).ready && !block_probe && !s1_valid && !s2_valid
   metaArb.io.in(6).bits.write := false
   metaArb.io.in(6).bits.addr := Cat(io.cpu.req.bits.addr >> paddrBits, tl_out.b.bits.address)
